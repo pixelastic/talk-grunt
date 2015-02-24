@@ -1,6 +1,6 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color:#D0D0D0;
+  color:#6f5a40;
 }
 
 h1, h2, h3 {
@@ -9,10 +9,10 @@ h1, h2, h3 {
 
 /* Generic containers, setting same background color */
 .remark-container {
-  background:#121212;
+  background:#e48632;
 }
 .remark-slide-content {
-  background:#121212;
+  background:#FFFFFF;
 }
 
  /* Remove drop shadow */
