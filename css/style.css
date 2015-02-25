@@ -3,10 +3,6 @@ body {
   color:#6f5a40;
 }
 
-h1, h2, h3 {
-  font-family: "LatoRegular";
-}
-
 /* Generic containers, setting same background color */
 .remark-container {
   background:#e48632;
@@ -20,5 +16,18 @@ h1, h2, h3 {
   -webkit-box-shadow:none;
   -moz-box-shadow:none;
   box-shadow:none;
+}
+
+h1, h2, h3 {
+  font-family: "LatoRegular";
+}
+
+/* First page */
+.slide-home {
+  text-align:center;
+}
+
+.full-page-title h1 {
+  color:#FFFFFF;
 }
 

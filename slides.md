@@ -1,6 +1,6 @@
-# ...
-
+class: slide-home
 ![Grunt](./img/grunt-logo.svg)
+# The Good Parts
 
 
 ---
@@ -141,6 +141,9 @@ module.exports = function(grunt) {
 ```
 
 ---
+background-image: url(./img/configuration-over-configuration.jpg)
+class: full-page-title
+
 # Configuration over Configuration
 
 ---
