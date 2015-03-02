@@ -1,41 +1,35 @@
-class: slide-home
-![Grunt](./img/grunt-logo.svg)
-# The Good Parts
-
-
+.center[
+  ![Grunt](./img/grunt-logo.svg)
+  # The Good Parts
+]
 ---
-# Experience Grunt
 
-![Canal+](./img/logo-canal.png)
-![ING Direct](./img/logo-ing.gif)
-![Meetic](./img/logo-meetic.jpg)
+# Grunt @Meetic
 
-Limites atteintes, lessons apprises.
+.center[
+  ![Meetic](./img/webapp-mobile.jpg)
 
+  ![Canal+](./img/logo-canal.png)
+  ![ING Direct](./img/logo-ing.gif)
+]
 ---
-# Refonte appli mobile @Meetic
 
-![Meetic](./img/webapp-mobile.jpg)
+# Sommaire
 
-- 6 devs front, 2 backs
-- Intégration continue
-- Jenkins, Gitlab, Bamboo, Hipchat
-
+.big-list[
+1. Maintenabilité
+2. Lenteur
+3. Tips & Tricks
+]
 ---
-# Pas Glop
 
-![Pas glop pas glop](./img/pas-glop-pas-glop.png)
-
-- Configuration over configuration
-- Gruntfile énorme
-- Trop de plugins
-- Modification sur disque
-
+class: full-page slide-maintain
+# Maintenabilité
 ---
-## Charger les plugins automatiquement
+
+## Charger les plugins
 
 ### Avant
-
 ```javascript
 grunt.loadNpmTasks('grunt-contrib-clean');
 grunt.loadNpmTasks('grunt-contrib-concat');
@@ -48,15 +42,13 @@ grunt.loadNpmTasks('grunt-contrib-sass');
 grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-contrib-watch');
 ```
-
 ### Après
-
 ```javascript
-require('load-grunt-tasks')(grunt);
+require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 ```
-
 ---
-## Charger la config automatiquement
+
+## Charger la configuration
 
 ### Avant
 ```javascript
@@ -78,8 +70,37 @@ autoprefixer: {
 },
 [...]
 ```
-
 ---
+
+### Découpage en plusieurs fichiers
+
+```javascript
+var fs = require('fs');
+function loadConfig(path) {
+  var config = {};
+  fs.readdirSync(path).forEach(function(file) {
+    config[file.replace(/\.js$/, '')] = require(path + file);
+  });
+  return config;
+}
+
+module.exports = function(grunt) {
+  var config = {
+    [...]
+  }
+  grunt.util._.extend(
+    config, 
+    loadConfig(__dirname + '/tasks/options/')
+  );
+
+  require('load-grunt-tasks')(grunt);
+
+  grunt.loadTasks('tasks');
+  grunt.config.init(config);
+};
+```
+---
+
 ### Après
 ```shell
 $ tree ./tasks/options/
@@ -109,46 +130,11 @@ module.exports = {
   }
 };
 ```
-
-
 ---
-### Small Gruntfile
 
-```javascript
-var fs = require('fs');
-function loadConfig(path) {
-  var config = {};
-  fs.readdirSync(path).forEach(function(file) {
-    config[file.replace(/\.js$/, '')] = require(path + file);
-  });
-  return config;
-}
+## Compact & Files Array syntax
 
-module.exports = function(grunt) {
-  var config = {
-    [...]
-  }
-  grunt.util._.extend(
-    config, 
-    loadConfig(__dirname + '/tasks/options/')
-  );
-
-  require('load-grunt-tasks')(grunt);
-
-  grunt.loadTasks('tasks');
-  grunt.config.init(config);
-};
-```
-
----
-background-image: url(./img/configuration-over-configuration.jpg)
-class: full-page-title
-
-# Configuration over Configuration
-
----
-## Recherche étendue
-
+### Compact
 ```javascript
 options: {
   files: {
@@ -158,7 +144,7 @@ options: {
   }
 }
 ```
-
+### Files Array
 ```javascript
 options: {
   files: [{
@@ -169,27 +155,44 @@ options: {
   }]
 }
 ```
-
 ---
-## Nommer vos target avec des noms explicites
 
-`grunt rsync:devJsCoreToDist`
+## Pipeline
+
+### `./app` > `./tmp` > `./dist`
+
+
+.big-list[
+- `./app`: Sources
+- `./tmp`: Transformations
+- `./dist`: Final
+]
+---
+
+## Targets explicites & Conventions
+
+<code>grunt task:<strong>target</strong></code>
 
 ```javascript
 [...]
-devJsCoreToDist: {...},
-devJsComponentsToDist: {...},
-prodCssDependenciesToTmp: {...},
-prodTemplatesAppToTmp: {...},
+devCssDependenciesToDist: {...},
+devHtmlAppToDist: {...},
+devTemplatesAppToDist: {...},
+devJsBowerTopToDist: {...},
+prodJsCoreToTmp: {...},
+prodJsComponentsToTmp: {...},
+prodJsScriptFileToDist: {...},
 [...]
 ```
 
+.big-list[
 - __environment__*Type*Action
 - __dev__*JsCore*ToDist
 - __prod__*CssDependencies*ToTmp
-
+]
 ---
-## Utiliser les valeurs par défaut
+
+## Valeurs par défaut
 
 ```javascript
 options: {
@@ -216,13 +219,12 @@ devTemplatesAppToDist: {
   }
 }
 ```
-
-
 ---
-# Make it faster
 
-
+class: full-page slide-slow
+# Lenteur
 ---
+
 ## Build, Measure, Learn
 
 `npm install time-grunt`
@@ -238,8 +240,8 @@ concat:prodJsBottomTmpFile       11.5s  ▇▇▇▇▇▇▇▇▇▇▇▇▇�
 uglify:prodMinifyFile             5.9s  ▇▇▇▇▇▇▇▇▇▇▇▇ 27%
 Total 21.7s
 ```
-
 ---
+
 ## grunt newer
 
 `npm install grunt-newer`
@@ -254,9 +256,9 @@ $ grunt newer:jshint:dev
 newer:jshint:dev  418ms  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 92%
 Total 453ms
 ```
-
 ---
-## Rsync
+
+## grunt rsync
 
 `npm install grunt-rsync`
 
@@ -287,88 +289,109 @@ args: [
   '--exclude=*'
 ]
 ```
+---
+## Build faster
+
+      | Compile | Build
+------|---------|-------
+Sass | ✔ | ✔
+Auto-prefixeur | ✔ | ✔
+Concaténation | ✘ | ✔
+Minification | ✘ | ✔
+File versionning | ✘ | ✔
+---
+
+class: full-page slide-plugins
+# Plugins
+---
+## <strike>grunt usemin</strike>
+
+.big-list[
+- Concaténation
+  - `grunt-contrib-concat`
+- Compression
+  - `grunt-contrib-cssmin`
+  - `grunt-contrib-htmlmin`
+  - `grunt-contrib-uglify`
+  - `grunt-contrib-imagemin`
+- Cache
+  - `grunt-filerev`
+- Injection
+  - `grunt-devcode`
+  - `grunt-file-blocks`
+]
 
 ---
-## Local build
-
-
-
-## Build et compile
-
-Build construit tout
-example typique de taches BUILD
-compression images -> révisions
-sass -> css -> concaténation -> modification assets -> autoprefixer -> minification -> révision
-suppression de devcode -> injection html dans templates -> injection variables
-de conf / env -> récriture angular -> annotate -> concaténation -> uglification
--> révisions
-
-COMPILE
-minimum, pour un débug plus facile.
-Sass -> CSS, mais pas de concat ni de minification
-
-## My pick
-Meilleurs plugins front.
-Pas usemin.
-fileblocks pour intégrer fichier générés
-concat, etc (dresser la liste)
-
 ## Livereload
 
-Watch des fichiers, rejoue les taches, et mets à jour le browser. Gain de temps
-énorme. Sur CSS assez malin pour mettre à jour seulement les styles.
-Peut faire la même chose sur les tests (si fichier de test change, on rejoue)
+`npm install grunt-contrib-watch`
 
-syntaxe spéciale pour trouver dans sous dossiers
+```javascript
+watch: {
+  files: [
+    'app/core/**/*.scss'
+  ],
+  tasks: [
+    'sass:devAppToTmp',
+    'newer:autoprefixer:devTmpToDist'
+  ]
+}
+```
+.big-list[
+- Watch fichiers sur disque
+- Rejoue tâches
+- Recharge navigateur
+- Recharge tests
+]
+---
 
-on déplace dans tmp/src, on convertit dans tmp/output, et on déplace ensuite
-dans dist
+## Apimock
 
-## Serve apimock
+`grunt serve:dev --apimock`
 
-taper sur des versions statiques de l'API pour quand pas développé
+```shell
+./apimock
+├── accounts
+│   ├── me.GET.json
+│   ├── me.OPTIONS.json
+│   └── validations.POST.json
+├── accounts.POST.json
+└── members
+    ├── 50397963.GET.json
+    ├── 530176615.GET.json
+    ├── 590042344.OPTIONS.json
+    ├── 590042344.PATCH.json
+    └── 660624580.GET.json
+```
+.big-list[
+- Option custom
+- Mock l'API
+- Retourne fichiers statiques dans `./apimock`
+]
 
+---
+## Build incassable
 
-# Integration Continue
+.big-list[
+- `pre-commit`
+  - `grunt jshint`
+  - `grunt jscs`
+  - `grunt merge-conflict`
+- `pre-push`
+  - `grunt test `
+- Manuel
+  - Cucumber + Firefox + Scrapping
+- Jenkins
+  - `grunt test:coverage`
+  - `grunt jscpd`
+  - `grunt complexity-report`
+]
+---
 
-## Gitlab, Jenkins (et Bamboo)
+class: full-page slide-questions
+# Questions ?
 
-On travail sur un fork local de l'app. On créé des branches pour chaque
-features. On push la branche sur notre fork. On créé une MR de notre branche
-vers l'upstream.
-
-Code review de tous, commentaires, une fois que 1 ok, le deuxième ok valide.
-Mergé automatiquement dans develop. Styleguide pour les remarques régulières.
-
-## Build incassable local
-
-Checkstyle avant de commit. Check test avant de push. Check merge markeurs.
-
-Test
-Tests unitaires sous karma/phantom. Lancé avant de push. Build "incassable".
-Test end-to-end "BDD-style", lance un firefox, avec des assertions cucumber,
-mais va vérifier dans les bases "de prod" en scrappant que c'est là.
-
-## Badges
-
-Gitlab <-> Jenkins. Si nouvelle MR ou nouveau commit sur une MR, Jenkins tente
-de merge la MR sur develop et lance les checks et les tests. Si passe, badge
-vert, si foire, badge rouge. Si instable, badge orange.
-
-## Build instable
-
-On mesure plein de choses, metrics créées par grunt, sorties dans des xml
-lisibles par jenkins. jshint, jscs (mais toujours ok), complexité cyclomatique,
-code coverage, copié-collé.
-
-## Release
-
-BUMPVERSION
-équivalent maven
-On bump la version dans package.json et autres fichiers de conf, on commit, on
-tag, on push sur master. Lancé par jenkins manuellement quand on release
-
-CHANGELOG
-Génération de changelog en markdown depuis l'historique git
-
-
+---
+# Sources
+- [Slow](https://www.flickr.com/photos/zivkovic/5850008238/in/photolist-9UWPD1-c1B9xf-9KjprJ-oeayt6-5wBH6k-LhX2t-cLYPbJ-DsWKL-8iDc53-8rwSDR-5p3vQ7-8oKLsw-HT3yu-p8Bsj1-hgJz2H-6Q7xE8-7VB5sf-vmhA6-3gW3DE-6pdSx2-d2CnFA-cuvg83-oEH5dm-fKtXLR-6s6Q8E-dv26Jo-9suTuN-ciofxq-3gRFNH-6mp5NP-8r4t5s-4Kc33f-8VYhLT-8RfWxc-8jD1oY-6Awwkj-e4Lxa-bEPjxE-8bwd4m-7XMF3J-8jyxkN-5wT9i5-3gJHim-7Gf8M-doN72m-oB1m5G-5iih9A-6sfQbk-bNi5pP-e8bpW5)
+  by Zdenko Zivkovic

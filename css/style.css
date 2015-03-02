@@ -2,32 +2,111 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color:#6f5a40;
 }
-
 /* Generic containers, setting same background color */
 .remark-container {
   background:#e48632;
 }
 .remark-slide-content {
   background:#FFFFFF;
+  padding:0.5em 2em;
+  position:relative;
 }
-
  /* Remove drop shadow */
 .remark-slide-scaler {
   -webkit-box-shadow:none;
   -moz-box-shadow:none;
   box-shadow:none;
 }
-
 h1, h2, h3 {
   font-family: "LatoRegular";
+  margin:0.5em 0;
 }
 
-/* First page */
-.slide-home {
+/* Full pages */
+.full-page {
+  text-align:center;
+  background-repeat: no-repeat;
+  background-size:100% !important;
+  /* background-position:center !important; */
+  vertical-align:middle;
   text-align:center;
 }
-
-.full-page-title h1 {
+.full-page h1 {
   color:#FFFFFF;
+  font-size:5em;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
 }
+
+/* Specific slides */
+.slide-maintain {
+  background-image: url(../img/maintain.jpg);
+}
+.slide-slow {
+  background-image: url(../img/slow.jpg);
+}
+.slide-plugins {
+  background-image: url(../img/plugins.jpg);
+  background-position:top left !important;
+}
+.slide-plugins h1 {
+  color:#6f5a40;
+}
+.slide-questions {
+  background-image: url(../img/questions.jpg);
+  background-position:top left !important;
+  background-size:100% 100% !important;
+}
+
+/* List of items */
+.big-list {
+  font-size:1.5em;
+  width:80%;
+  margin:0 auto;
+}
+.big-list li {
+  padding-bottom:0.3em;
+}
+
+/* Tables */
+
+
+/* Code */
+code {
+  font-family: Menlo, Monaco, "Courier New", monospace;
+  padding: .25em .5em;
+  font-weight:bold;
+  color: #BF616A;
+  background-color: #F9F9F9;
+}
+code strong {
+  background:yellow;
+}
+/* Code blocks */
+pre {
+  font-family: Menlo, Monaco, "Courier New", monospace;
+  margin:0 0 1em 0;
+}
+pre code {
+  font-weight:normal;
+}
+.hljs-default .hljs {
+  background:#121212;
+  color: #D0D0D0;
+}
+.hljs-default .hljs-string {
+  color:#5f87af;
+}
+.hljs-default .hljs-keyword {
+  color:#ff5f5f;
+  font-weight:normal;
+}
+.hljs-default .hljs-title {
+  color:#00AF5F;
+  font-weight:normal;
+}
+.hljs-default .hljs-regexp {
+  color:#005F87;
+  font-weight:normal;
+}
+
 
