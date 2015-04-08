@@ -8,7 +8,7 @@ rsync \
   --prune-empty-dirs \
   --compress \
   ./css ./fonts ./img ./js ./index.html \
-  pixelastic:/var/www/pixelastic.com/talks.pixelastic.com/dist/grunt-bbl-octo
+  pixelastic:/var/www/pixelastic.com/talks.pixelastic.com/dist/grunt-bbl-meetic
 
 
 
